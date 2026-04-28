@@ -15,7 +15,12 @@ api.interceptors.response.use(
     if (error.response && (error.response.status === 401 || (error.response.status === 400 && error.response.data?.message?.includes("token")))) {
       console.warn("Unauthorized access! The JWT might be expired or missing.");
       // Force a soft logout if the API actively rejects the auth token
-      if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+      if (
+        window.location.pathname !== "/login" && 
+        window.location.pathname !== "/register" && 
+        window.location.pathname !== "/" &&
+        error.config?.url !== "/auth/me"
+      ) {
         window.location.href = "/login";
       }
     }
