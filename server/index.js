@@ -69,11 +69,11 @@ server.listen(PORT, () => {
 
 
 //temporary route to test database connection
-const pool = require('./config/db');
+import pool from './config/db.js';
 
 app.get('/test-db', async (req, res) => {
   try {
-    const result = await pool.query('SELECT NOW()');
+    const result = await pool.query('SELECT * FROM users');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
