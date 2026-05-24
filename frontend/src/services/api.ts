@@ -2,7 +2,11 @@ import axios from "axios";
 
 // In production the frontend should point to the deployed backend.
 // Use Vite env `VITE_API_URL` (e.g. https://interviewai-backend-project.onrender.com)
-const BASE_URL = (import.meta.env.VITE_API_URL as string) || "/api";
+// If `VITE_API_URL` is provided we append `/api` so api.post("/auth/register") -> <BACKEND>/api/auth/register
+const RAW_API = (import.meta.env.VITE_API_URL as string) || "";
+const BASE_URL = RAW_API
+  ? (RAW_API.endsWith("/") ? RAW_API.slice(0, -1) : RAW_API) + "/api"
+  : "/api";
 
 // Creates a centralized axios instance
 const api = axios.create({

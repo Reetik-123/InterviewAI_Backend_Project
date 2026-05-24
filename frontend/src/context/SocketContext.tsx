@@ -25,15 +25,17 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Determine socket URL: use VITE_API_URL in production, otherwise proxy to same origin
-    const SOCKET_URL = (import.meta.env.VITE_API_URL as string) || "/";
+    // Determine socket URL: use VITE_API_URL origin in production, otherwise proxy to same origin
+    const RAW_API = (import.meta.env.VITE_API_URL as string) || "";
+    // For sockets we need the origin (no /api). If RAW_API is empty we connect to '/'
+    const SOCKET_URL = RAW_API ? (RAW_API.endsWith("/") ? RAW_API.slice(0, -1) : RAW_API) : "/";
     const connectOpts = {
       path: "/socket.io",
       withCredentials: true,
       autoConnect: true,
     } as const;
 
-    const newSocket = SOCKET_URL === "/" ? io(SOCKET_URL, connectOpts) : io(SOCKET_URL, connectOpts);
+    const newSocket = io(SOCKET_URL, connectOpts);
 
     newSocket.on("connect", () => {
       console.log("Socket connected:", newSocket.id);
