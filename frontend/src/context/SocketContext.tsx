@@ -25,12 +25,15 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // Since we're proxying API, we can connect using the same hostname/origin
-    const newSocket = io("/", {
+    // Determine socket URL: use VITE_API_URL in production, otherwise proxy to same origin
+    const SOCKET_URL = (import.meta.env.VITE_API_URL as string) || "/";
+    const connectOpts = {
       path: "/socket.io",
       withCredentials: true,
       autoConnect: true,
-    });
+    } as const;
+
+    const newSocket = SOCKET_URL === "/" ? io(SOCKET_URL, connectOpts) : io(SOCKET_URL, connectOpts);
 
     newSocket.on("connect", () => {
       console.log("Socket connected:", newSocket.id);

@@ -1,8 +1,12 @@
 import axios from "axios";
 
+// In production the frontend should point to the deployed backend.
+// Use Vite env `VITE_API_URL` (e.g. https://interviewai-backend-project.onrender.com)
+const BASE_URL = (import.meta.env.VITE_API_URL as string) || "/api";
+
 // Creates a centralized axios instance
 const api = axios.create({
-  baseURL: "/api", // Relies on the vite.config.ts proxy
+  baseURL: BASE_URL,
   withCredentials: true, // IMPORTANT: Allows passing HttpOnly JWT cookies!
   headers: {
     "Content-Type": "application/json",
@@ -16,8 +20,8 @@ api.interceptors.response.use(
       console.warn("Unauthorized access! The JWT might be expired or missing.");
       // Force a soft logout if the API actively rejects the auth token
       if (
-        window.location.pathname !== "/login" && 
-        window.location.pathname !== "/register" && 
+        window.location.pathname !== "/login" &&
+        window.location.pathname !== "/register" &&
         window.location.pathname !== "/" &&
         error.config?.url !== "/auth/me"
       ) {
